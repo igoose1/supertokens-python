@@ -27,7 +27,10 @@ if TYPE_CHECKING:
         APIInterface,
     )
 
-from supertokens_python.exceptions import raise_bad_input_exception
+from supertokens_python.exceptions import (
+    raise_bad_input_exception,
+    raise_general_exception,
+)
 from supertokens_python.utils import default_user_context, send_200_response
 
 from .utils import validate_form_fields_or_throw_error
@@ -49,6 +52,8 @@ async def handle_sign_up_api(api_implementation: APIInterface, api_options: APIO
         form_fields, api_options, user_context
     )
 
+    if response is None:
+        return raise_general_exception(TypeError("sign_up_post returned None."))
     if isinstance(response, SignUpPostOkResult):
         return send_200_response(response.to_json(), api_options.response)
     if isinstance(response, GeneralErrorResponse):
